@@ -37,22 +37,6 @@ public class Player : MonoBehaviour
                 state = State.Move;
             }
         }
-        // if (!isSkillPlaying)
-        // {
-        //     if (MyInput.instance.Q.triggered)
-        //     {
-        //         _skillCo = StartCoroutine(Qskill());
-        //     }
-        // }
-        // if (MyInput.instance.space.triggered)
-        // {
-        //     if (_skillCo != null)
-        //     {
-
-        //         StopCoroutine(_skillCo);
-        //     }
-        //     StartCoroutine(Spaceskill());
-        // }
     }
 
     #region moving state
@@ -71,6 +55,8 @@ public class Player : MonoBehaviour
         }
     }
     Vector3 moveVec;
+    Vector3 fixVec;
+    public bool alertTriggered;
     private IEnumerator Move()
     {
         anim.SetBool("Move", true);
@@ -82,9 +68,41 @@ public class Player : MonoBehaviour
             moveVec.y = 0;
             moveVec = Vector3.Normalize(moveVec) * 1.5f;
 
-            rigid.velocity = moveVec;
 
-            transform.DOLookAt(transform.position + moveVec, 0.25f);        // 이거에 씹히는듯
+            // if (Physics.Raycast(transform.position + Vector3.up * 0.5f, moveVec * 0.3f, out RaycastHit hit1, 1))
+            // {
+            //     Debug.DrawRay(transform.position + Vector3.up * 0.5f, moveVec * 0.3f, Color.green, 0.1f);
+
+            //     if (Physics.Raycast(transform.position + Vector3.up * 0.5f, Vector3.Normalize(moveVec + transform.right * 2) * 0.5f, out RaycastHit hit, 1))
+            //     {
+            //         if (!alertTriggered)
+            //         {
+            //             alertTriggered = true;
+            //             fixVec = -transform.right;
+            //         }
+            //         Debug.DrawRay(transform.position + Vector3.up * 0.5f, hit.point - (transform.position + Vector3.up * 0.5f), Color.magenta);
+
+            //     }
+            //     else if (Physics.Raycast(transform.position + Vector3.up * 0.5f, Vector3.Normalize(moveVec - transform.right * 2) * 0.5f, out RaycastHit hit0, 1))
+            //     {
+            //         if (!alertTriggered)
+            //         {
+            //             alertTriggered = true;
+            //             fixVec = transform.right;
+            //         }
+            //         Debug.DrawRay(transform.position + Vector3.up * 0.5f, hit.point - (transform.position + Vector3.up * 0.5f), Color.magenta);
+            //     }
+            // }
+            // else
+            // {
+            //     alertTriggered = false;
+            //     fixVec = Vector3.zero;
+            // }
+
+            rigid.velocity = moveVec;
+            transform.DOLookAt(transform.position + moveVec, 0.25f);
+
+
 
             if (Vector3.Distance(targetPos, transform.position) < 0.1f)
             {

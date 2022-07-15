@@ -4800,6 +4800,11 @@ PrefabInstance:
       propertyPath: m_Drag
       value: 5
       objectReference: {fileID: 0}
+    - target: {fileID: 3347639350434421283, guid: 2e17e08dd54509a46bd64c6883c41a7a,
+        type: 3}
+      propertyPath: m_Radius
+      value: 0.1
+      objectReference: {fileID: 0}
     - target: {fileID: 4176694211156515320, guid: 2e17e08dd54509a46bd64c6883c41a7a,
         type: 3}
       propertyPath: m_RootOrder

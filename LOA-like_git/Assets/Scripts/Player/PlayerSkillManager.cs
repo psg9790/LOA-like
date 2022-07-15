@@ -329,50 +329,6 @@ public class PlayerSkillManager : MonoBehaviour
         state = State.None;
         skillCo = null;
         yield return null;
-        // player.state = Player.State.Idle;
-        // player.blockMove = true;
-        // UsedSkill(State.W);
-        // yield return null;      // move state의 transform.DoKill 대기
-
-        // float _startTime = Time.time;
-        // Vector3 _skillDir = player.GetMousePosition_BlockRaycast();
-        // _skillDir = _skillDir - transform.position;
-        // _skillDir.y = 0;
-        // _skillDir = Vector3.Normalize(_skillDir);
-        // transform.rotation = Quaternion.LookRotation(_skillDir);
-        // player.anim.SetTrigger("Q");
-
-        // bool dash = false;
-
-        // while (true)
-        // {
-        //     yield return null;
-        //     float _elapsed = Time.time - _startTime;
-        //     if (_elapsed < 0.1f)
-        //     {
-        //     }
-        //     else if (_elapsed < 0.35f)
-        //     {
-        //         if (!dash)
-        //         {
-        //             dash = true;
-        //             player.rigid.AddForce(_skillDir * 7, ForceMode.Impulse);
-        //         }
-        //     }
-        //     else if (_elapsed < 0.75f)
-        //     {
-        //         player.rigid.velocity = Vector3.zero;
-        //     }
-        //     else
-        //     {
-        //         break;
-        //     }
-        // }
-
-        // player.blockMove = false;
-        // state = State.None;
-        // skillCo = null;
-        // yield return null;
     }
     private IEnumerator E_skillCo()
     {
@@ -420,50 +376,6 @@ public class PlayerSkillManager : MonoBehaviour
         state = State.None;
         skillCo = null;
         yield return null;
-        // player.state = Player.State.Idle;
-        // player.blockMove = true;
-        // UsedSkill(State.E);
-        // yield return null;      // move state의 transform.DoKill 대기
-
-        // float _startTime = Time.time;
-        // Vector3 _skillDir = player.GetMousePosition_BlockRaycast();
-        // _skillDir = _skillDir - transform.position;
-        // _skillDir.y = 0;
-        // if (_skillDir.magnitude > 3)
-        // {
-        //     _skillDir = Vector3.Normalize(_skillDir) * 3;
-        // }
-
-        // transform.rotation = Quaternion.LookRotation(_skillDir);
-        // player.anim.SetTrigger("Q");
-        // Vector3 startPos = transform.position;
-
-        // while (true)
-        // {
-        //     yield return null;
-        //     float _elapsed = Time.time - _startTime;
-        //     if (_elapsed < 0.5f)
-        //     {
-        //         transform.position = new Vector3(Mathf.Lerp(startPos.x, startPos.x + _skillDir.x, _elapsed),
-        //          Mathf.Lerp(0, 1f, (_elapsed * 2)),
-        //         Mathf.Lerp(startPos.z, startPos.z + _skillDir.z, _elapsed));
-        //     }
-        //     else if (_elapsed < 1f)
-        //     {
-        //         transform.position = new Vector3(Mathf.Lerp(startPos.x, startPos.x + _skillDir.x, _elapsed),
-        //         Mathf.Lerp(1f, 0, (_elapsed - 0.5f) * 2),
-        //         Mathf.Lerp(startPos.z, startPos.z + _skillDir.z, _elapsed));
-        //     }
-        //     else
-        //     {
-        //         break;
-        //     }
-        // }
-
-        // player.blockMove = false;
-        // state = State.None;
-        // skillCo = null;
-        // yield return null;
     }
     private IEnumerator R_skillCo()
     {
@@ -532,7 +444,7 @@ public class PlayerSkillManager : MonoBehaviour
         {
             yield return null;
             float _elapsed = Time.time - _startTime;
-            if (_elapsed < 1f)
+            if (_elapsed < 2.25f)
             {
 
             }

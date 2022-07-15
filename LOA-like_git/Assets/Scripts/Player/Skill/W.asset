@@ -23,7 +23,7 @@ MonoBehaviour:
     SerializationNodes: []
   skillName: "\uD30C\uC1C4\uC758 \uAC15\uD0C0"
   coolDown: 4
-  yellowCost: 25
+  yellowCost: 15
   yellowEarn: 0
   greenCost: 0
   greenEarn: 30

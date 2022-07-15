@@ -24,6 +24,6 @@ MonoBehaviour:
   skillName: "\uCD08\uC2E0\uC131 \uD3ED\uBC1C"
   coolDown: 6
   yellowCost: 0
-  yellowEarn: 18
+  yellowEarn: 25
   greenCost: 25
   greenEarn: 0
