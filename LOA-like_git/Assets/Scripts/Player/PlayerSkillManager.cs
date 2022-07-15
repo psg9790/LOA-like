@@ -136,7 +136,7 @@ public class PlayerSkillManager : MonoBehaviour
             // }
             if (curGreenGage < greenGage)
             {
-                curGreenGage += 18f;
+                curGreenGage += 5f;
                 if (curGreenGage > greenGage)
                 {
                     curGreenGage = greenGage;
@@ -263,64 +263,30 @@ public class PlayerSkillManager : MonoBehaviour
         _skillDir.y = 0;
         _skillDir = Vector3.Normalize(_skillDir);
         transform.rotation = Quaternion.LookRotation(_skillDir);
-        player.anim.SetTrigger("Q");
 
-        bool atk2gate = false;
-        bool atk3gate = false;
-        bool atk1 = false;
-        bool atk2 = false;
-        bool atk3 = false;
+        // bool atk2gate = false;
+        // bool atk3gate = false;
+        // bool atk1 = false;
+        // bool atk2 = false;
+        // bool atk3 = false;
+        bool attacked = false;
 
         while (true)
         {
             yield return null;
             float _elapsed = Time.time - _startTime;
-            if (_elapsed < 0.4f)
+            if (_elapsed < 0.6f)
             {
-                // atk1 애니메이션
-                if (!atk1)
+                if (!attacked)
                 {
-                    atk1 = true;
-                    // player.rigid.AddForce(_skillDir * 6, ForceMode.Impulse);
-                    Debug.Log("w1");
-                }
-            }
-            else if (_elapsed < 0.8f)
-            {
-                if (MyInput.instance.S.IsPressed() || atk2gate)
-                {
-                    atk2gate = true;
-                    if (!atk2)
-                    {
-                        atk2 = true;
-                        // player.rigid.AddForce(_skillDir * 4, ForceMode.Impulse);
-                        Debug.Log("w2");
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else if (_elapsed < 1.2f)
-            {
-                if (MyInput.instance.S.IsPressed() || atk3gate)
-                {
-                    atk3gate = true;
-                    if (!atk3)
-                    {
-                        atk3 = true;
-                        // player.rigid.AddForce(_skillDir * 6, ForceMode.Impulse);
-                        Debug.Log("w3");
-                    }
-                }
-                else
-                {
-                    break;
+                    attacked = true;
+                    player.anim.SetTrigger("W1");
+                    // Debug.Log("w1");
                 }
             }
             else
             {
+                skillCo = StartCoroutine(W2_skillCo());
                 break;
             }
         }
@@ -329,6 +295,65 @@ public class PlayerSkillManager : MonoBehaviour
         state = State.None;
         skillCo = null;
         yield return null;
+    }
+    private IEnumerator W2_skillCo()
+    {
+        player.state = Player.State.Idle;
+        player.blockMove = true;
+        yield return null;
+
+        float _startTime = Time.time;
+        Vector3 _skillDir;
+
+
+        bool doAttack = false;
+        bool attacked = false;
+
+        while (true)
+        {
+            yield return null;
+            float _elapsed = Time.time - _startTime;
+
+            if (!doAttack)
+            {
+                if (_elapsed < 1.5f)
+                {
+                    if (MyInput.instance.W.IsPressed())
+                    {
+                        _skillDir = player.GetMousePosition_BlockRaycast();
+                        _skillDir = _skillDir - transform.position;
+                        _skillDir.y = 0;
+                        _skillDir = Vector3.Normalize(_skillDir);
+                        transform.rotation = Quaternion.LookRotation(_skillDir);
+                        _startTime = Time.time;
+                        doAttack = true;
+                        player.blockMove = true;
+                        player.state = Player.State.Idle;
+                    }
+                }
+                else
+                {
+                    Debug.Log("W chain crashed");
+                    break;
+                }
+            }
+            else
+            {
+                if (!attacked)
+                {
+                    attacked = true;
+                    player.anim.SetTrigger("W2");
+                }
+
+
+                if (_elapsed > 1f)
+                {
+                    player.blockMove = false;
+                    break;
+                }
+            }
+        }
+
     }
     private IEnumerator E_skillCo()
     {
@@ -390,35 +415,32 @@ public class PlayerSkillManager : MonoBehaviour
         _skillDir.y = 0;
         _skillDir = Vector3.Normalize(_skillDir);
         transform.rotation = Quaternion.LookRotation(_skillDir);
-        player.anim.SetTrigger("Q");
+        player.anim.SetTrigger("R");
+
+        bool attacked = false;
 
         while (true)
         {
             yield return null;
             float _elapsed = Time.time - _startTime;
 
-            if (MyInput.instance.R.IsPressed())
+            if (_elapsed < 0.7f)
             {
-                if (_elapsed < 1.2f)
+                if (!attacked)
                 {
-                    Debug.Log("r");
-                }
-                else
-                {
-                    break;
+                    attacked = true;
+                    _skillDir = -_skillDir * 2 + Vector3.up;
+                    player.rigid.AddForce(_skillDir * 3, ForceMode.Impulse);
                 }
             }
             else
             {
-                Debug.Log("캔슬");
-
-                // 연타 취소
                 break;
             }
         }
 
         // 후속타
-        Debug.Log("r final");
+        // Debug.Log("r final");
 
         player.blockMove = false;
         state = State.None;
@@ -444,7 +466,7 @@ public class PlayerSkillManager : MonoBehaviour
         {
             yield return null;
             float _elapsed = Time.time - _startTime;
-            if (_elapsed < 2.25f)
+            if (_elapsed < 2.4f)
             {
 
             }
@@ -474,64 +496,72 @@ public class PlayerSkillManager : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(_skillDir);
         player.anim.SetTrigger("S");
 
-        bool atk2gate = false;
-        bool atk3gate = false;
-        bool atk1 = false;
-        bool atk2 = false;
-        bool atk3 = false;
+        // bool atk2gate = false;
+        // bool atk3gate = false;
+        // bool atk1 = false;
+        // bool atk2 = false;
+        // bool atk3 = false;
 
         while (true)
         {
             yield return null;
             float _elapsed = Time.time - _startTime;
-            if (_elapsed < 0.4f)
+            if (_elapsed < 2.1f)
             {
-                // atk1 애니메이션
-                if (!atk1)
-                {
-                    atk1 = true;
-                    // player.rigid.AddForce(_skillDir * 6, ForceMode.Impulse);
-                    Debug.Log("s1");
-                }
-            }
-            else if (_elapsed < 0.8f)
-            {
-                if (MyInput.instance.S.IsPressed() || atk2gate)
-                {
-                    atk2gate = true;
-                    if (!atk2)
-                    {
-                        atk2 = true;
-                        // player.rigid.AddForce(_skillDir * 4, ForceMode.Impulse);
-                        Debug.Log("s2");
-                    }
-                }
-                else
-                {
-                    break;
-                }
-            }
-            else if (_elapsed < 1.2f)
-            {
-                if (MyInput.instance.S.IsPressed() || atk3gate)
-                {
-                    atk3gate = true;
-                    if (!atk3)
-                    {
-                        atk3 = true;
-                        // player.rigid.AddForce(_skillDir * 6, ForceMode.Impulse);
-                        Debug.Log("s3");
-                    }
-                }
-                else
-                {
-                    break;
-                }
+
             }
             else
             {
                 break;
             }
+            // if (_elapsed < 0.4f)
+            // {
+            //     // atk1 애니메이션
+            //     if (!atk1)
+            //     {
+            //         atk1 = true;
+            //         // player.rigid.AddForce(_skillDir * 6, ForceMode.Impulse);
+            //         Debug.Log("s1");
+            //     }
+            // }
+            // else if (_elapsed < 0.8f)
+            // {
+            //     if (MyInput.instance.S.IsPressed() || atk2gate)
+            //     {
+            //         atk2gate = true;
+            //         if (!atk2)
+            //         {
+            //             atk2 = true;
+            //             // player.rigid.AddForce(_skillDir * 4, ForceMode.Impulse);
+            //             Debug.Log("s2");
+            //         }
+            //     }
+            //     else
+            //     {
+            //         break;
+            //     }
+            // }
+            // else if (_elapsed < 1.2f)
+            // {
+            //     if (MyInput.instance.S.IsPressed() || atk3gate)
+            //     {
+            //         atk3gate = true;
+            //         if (!atk3)
+            //         {
+            //             atk3 = true;
+            //             // player.rigid.AddForce(_skillDir * 6, ForceMode.Impulse);
+            //             Debug.Log("s3");
+            //         }
+            //     }
+            //     else
+            //     {
+            //         break;
+            //     }
+            // }
+            // else
+            // {
+            //     break;
+            // }
         }
 
         player.blockMove = false;
@@ -569,7 +599,7 @@ public class PlayerSkillManager : MonoBehaviour
                 if (!atk)
                 {
                     atk = true;
-                    player.rigid.AddForce(_skillDir * 2, ForceMode.Impulse);
+                    player.rigid.AddForce(_skillDir * 3, ForceMode.Impulse);
                 }
             }
             else
@@ -685,7 +715,7 @@ public class PlayerSkillManager : MonoBehaviour
         //  체인 입력을 받으면 break 받아서 이 이후 구문으로 오게 됨 (단순 코드 반복이라 방법을 찾아야함)
         if (skillCo != null)
         {
-            Debug.Log("cancle");
+            // Debug.Log("cancle");
             StopCoroutine(skillCo);
             skillCo = null;
         }

@@ -22,8 +22,8 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   skillName: "\uC5F0\uD658\uD30C\uC2E0\uAD8C"
-  coolDown: 6
+  coolDown: 25
   yellowCost: 0
   yellowEarn: 20
-  greenCost: 20
+  greenCost: 30
   greenEarn: 0
