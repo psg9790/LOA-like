@@ -234,6 +234,17 @@ public class PlayerSkillManager : MonoBehaviour
             if (_elapsed < 0.1f)
             {
                 player.rigid.velocity = _skillDir * Mathf.Pow(1 - _elapsed, 2) * 25;
+
+
+                // if (Physics.Raycast(transform.position + Vector3.up * 0.5f, transform.forward, out RaycastHit _Qhit, 1f, 1 << LayerMask.NameToLayer("Monster")))
+                // {
+                //     Debug.Log("Monster");
+                //     Debug.Log(_Qhit.transform.gameObject.name);
+                //     if (_Qhit.transform.tag.Equals("BackAttack"))
+                //     {
+                //         Debug.Log("Back Attack");
+                //     }
+                // }
             }
             else if (_elapsed < 0.8f)
             {
