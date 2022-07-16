@@ -153,16 +153,27 @@ public class PlayerSkillManager : MonoBehaviour
     {
         for (int x = 0; x < 8; x++)
         {
-            if (coolTime[x] > 0)
+            if (!active[x])
             {
-                coolTime[x] -= Time.deltaTime;
-                if (coolTime[x] >= 0)   // fillAmount 밸류 계산 - 쿨다운 디스플레이
+                if (coolTime[x] > 0)
                 {
-                    skillCooldownImageList[x].fillAmount = coolTime[x] / skillList.list[x].coolDown;
+                    coolTime[x] -= Time.deltaTime;
+                    if (coolTime[x] >= 0)   // 나누기 에러 방지
+                    {
+                        skillCooldownImageList[x].fillAmount = coolTime[x] / skillList.list[x].coolDown;
+                    }
+                    if (coolTime[x] <= 0)
+                    {
+                        active[x] = true;
+                        skillCooldownImageList[x].fillAmount = 0;
+                        skillIconList[x].DOColor(Color.white * 1.5f, 0.25f).From();
+                    }
                 }
-                if (coolTime[x] <= 0)
+            }
+            else
+            {
+                if (skillCooldownImageList[x].fillAmount != 0)
                 {
-                    active[x] = true;
                     skillCooldownImageList[x].fillAmount = 0;
                     skillIconList[x].DOColor(Color.white * 1.5f, 0.25f).From();
                 }

@@ -3,7 +3,26 @@ using System.Collections.Generic;
 using UnityEngine;
 
 using DG.Tweening;
+using UnityEngine.EventSystems;
 
+[System.Serializable]
+public class PlayerStats
+{
+    public int crit;    // 치명
+    public int specialization;  // 특화
+    public int swiftness;   // 신속
+
+    // public int domination;  // 제압
+    // public int endurance;   // 인내
+    // public int expertise;   // 숙련
+
+    [HideInInspector] public const int totalStatPoint = 2100;
+    [HideInInspector] public const float critPerPoint = 0.0357f;      // 치명스탯 => 치명타확률 환산배율
+    [HideInInspector] public const float greenDamagePerPoint = 0.0573f;       // 특화스탯 => 충격스킬데미지 환산배율
+    [HideInInspector] public const float speedPerpoint = 0.0174f;     // 신속스탯 => 공이속 환산배율
+    [HideInInspector] public const float coolDownPerPoint = 0.0214f;      // 신속스탯 => 쿨감 환산배율
+
+}
 public class Player : MonoBehaviour
 {
     public Animator anim;
@@ -18,8 +37,10 @@ public class Player : MonoBehaviour
     public Vector3 targetPos;
 
     public bool blockMove = false;
-
     public bool isSkillPlaying = false;
+    public bool alertTriggered;
+
+    public PlayerStats playerStats;
 
 
     private void Start()
@@ -29,7 +50,7 @@ public class Player : MonoBehaviour
     }
     private void Update()
     {
-        if (MyInput.instance.mouseRight.IsPressed() && !blockMove)
+        if (MyInput.instance.mouseRight.IsPressed() && !blockMove && !EventSystem.current.IsPointerOverGameObject())
         {
             targetPos = GetMousePosition_Terrain();
             if (Vector3.Distance(targetPos, transform.position) > 0.1f)
@@ -56,7 +77,6 @@ public class Player : MonoBehaviour
     }
     Vector3 moveVec;
     Vector3 fixVec;
-    public bool alertTriggered;
     private IEnumerator Move()
     {
         anim.SetBool("Move", true);
