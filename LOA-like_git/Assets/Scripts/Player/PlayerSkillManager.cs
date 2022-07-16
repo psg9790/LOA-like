@@ -344,7 +344,6 @@ public class PlayerSkillManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("W chain crashed");
                     break;
                 }
             }
@@ -353,7 +352,6 @@ public class PlayerSkillManager : MonoBehaviour
                 if (!attacked)
                 {
                     attacked = true;
-                    player.anim.SetTrigger("W2");
                 }
 
 
