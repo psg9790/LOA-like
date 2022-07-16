@@ -20,8 +20,27 @@ public class CameraController : MonoBehaviour
         instance = this;
     }
 
+    float mouseWheelDelta;
     private void FixedUpdate()
     {
+        mouseWheelDelta = MyInput.instance.mouseWheelDelta.ReadValue<float>();
+        if (mouseWheelDelta != 0)
+        {
+            if (mouseWheelDelta > 0)
+            {
+                // 확대
+                if (chaseOffset.y > 2)
+                    chaseOffset = chaseOffset + target.transform.forward * 0.5f;
+            }
+            else
+            {
+                // 축소
+                if (chaseOffset.y < 8)
+                    chaseOffset = chaseOffset - target.transform.forward * 0.5f;
+
+            }
+        }
+
         SetPosition();
     }
 

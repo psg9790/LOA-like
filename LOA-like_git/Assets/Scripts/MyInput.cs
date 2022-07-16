@@ -14,6 +14,7 @@ public class MyInput : MonoBehaviour
     [BoxGroup("Awake")] public InputAction mouseDelta;
     [BoxGroup("Awake")] public InputAction mousePosition;
     [BoxGroup("Awake")] public InputAction mouseRight;
+    [BoxGroup("Awake")] public InputAction mouseWheelDelta;
     [BoxGroup("Awake")] public InputAction Q;
     [BoxGroup("Awake")] public InputAction W;
     [BoxGroup("Awake")] public InputAction E;
@@ -32,6 +33,7 @@ public class MyInput : MonoBehaviour
         mouseDelta = map.FindAction("MouseDelta");
         mousePosition = map.FindAction("MousePosition");
         mouseRight = map.FindAction("MouseRight");
+        mouseWheelDelta = map.FindAction("MouseWheelDelta");
         Q = map.FindAction("Q");
         W = map.FindAction("W");
         E = map.FindAction("E");
