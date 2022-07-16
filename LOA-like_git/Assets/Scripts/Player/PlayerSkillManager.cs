@@ -42,6 +42,14 @@ public class PlayerSkillManager : MonoBehaviour
         StartCoroutine(GageEarnCo());
     }
 
+    public void TryAttackFunc(Vector3 _direction, float _range, PlayerSkillType _skillType)
+    {
+        if (Physics.Raycast(transform.position + Vector3.up * 0.5f, _direction, out RaycastHit _tryhit, _range, 1 << LayerMask.NameToLayer("Monster")))
+        {
+            Monster _hitMonster = _tryhit.transform.GetComponentInParent<Monster>();
+        }
+    }
+
     private void Update()
     {
         IdenUpdate();
@@ -108,9 +116,7 @@ public class PlayerSkillManager : MonoBehaviour
             else if (MyInput.instance.F.triggered
             && active[(int)State.F]
             && skillCo == null
-            && curGreenGage > 0
-            /*&& skillList.list[(int)State.F].yellowCost <= curYellowGage*/
-            /*&& skillList.list[(int)State.F].greenCost <= curGreenGage*/)
+            && curGreenGage > 0)
             {
                 skillCo = StartCoroutine(F_skillCo());
             }
@@ -126,14 +132,7 @@ public class PlayerSkillManager : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(1.2f);
-            // if (curYellowGage < yellowGage)
-            // {
-            //     curYellowGage += 18f;
-            //     if (curYellowGage > yellowGage)
-            //     {
-            //         curYellowGage = yellowGage;
-            //     }
-            // }
+
             if (curGreenGage < greenGage)
             {
                 curGreenGage += 5f;
@@ -235,16 +234,6 @@ public class PlayerSkillManager : MonoBehaviour
             {
                 player.rigid.velocity = _skillDir * Mathf.Pow(1 - _elapsed, 2) * 25;
 
-
-                // if (Physics.Raycast(transform.position + Vector3.up * 0.5f, transform.forward, out RaycastHit _Qhit, 1f, 1 << LayerMask.NameToLayer("Monster")))
-                // {
-                //     Debug.Log("Monster");
-                //     Debug.Log(_Qhit.transform.gameObject.name);
-                //     if (_Qhit.transform.tag.Equals("BackAttack"))
-                //     {
-                //         Debug.Log("Back Attack");
-                //     }
-                // }
             }
             else if (_elapsed < 0.8f)
             {
@@ -286,11 +275,6 @@ public class PlayerSkillManager : MonoBehaviour
         _skillDir = Vector3.Normalize(_skillDir);
         transform.rotation = Quaternion.LookRotation(_skillDir);
 
-        // bool atk2gate = false;
-        // bool atk3gate = false;
-        // bool atk1 = false;
-        // bool atk2 = false;
-        // bool atk3 = false;
         bool attacked = false;
 
         while (true)
@@ -303,7 +287,6 @@ public class PlayerSkillManager : MonoBehaviour
                 {
                     attacked = true;
                     player.anim.SetTrigger("W1");
-                    // Debug.Log("w1");
                 }
             }
             else
@@ -459,9 +442,6 @@ public class PlayerSkillManager : MonoBehaviour
             }
         }
 
-        // 후속타
-        // Debug.Log("r final");
-
         player.blockMove = false;
         state = State.None;
         skillCo = null;
@@ -516,12 +496,6 @@ public class PlayerSkillManager : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(_skillDir);
         player.anim.SetTrigger("S");
 
-        // bool atk2gate = false;
-        // bool atk3gate = false;
-        // bool atk1 = false;
-        // bool atk2 = false;
-        // bool atk3 = false;
-
         while (true)
         {
             yield return null;
@@ -534,54 +508,6 @@ public class PlayerSkillManager : MonoBehaviour
             {
                 break;
             }
-            // if (_elapsed < 0.4f)
-            // {
-            //     // atk1 애니메이션
-            //     if (!atk1)
-            //     {
-            //         atk1 = true;
-            //         // player.rigid.AddForce(_skillDir * 6, ForceMode.Impulse);
-            //         Debug.Log("s1");
-            //     }
-            // }
-            // else if (_elapsed < 0.8f)
-            // {
-            //     if (MyInput.instance.S.IsPressed() || atk2gate)
-            //     {
-            //         atk2gate = true;
-            //         if (!atk2)
-            //         {
-            //             atk2 = true;
-            //             // player.rigid.AddForce(_skillDir * 4, ForceMode.Impulse);
-            //             Debug.Log("s2");
-            //         }
-            //     }
-            //     else
-            //     {
-            //         break;
-            //     }
-            // }
-            // else if (_elapsed < 1.2f)
-            // {
-            //     if (MyInput.instance.S.IsPressed() || atk3gate)
-            //     {
-            //         atk3gate = true;
-            //         if (!atk3)
-            //         {
-            //             atk3 = true;
-            //             // player.rigid.AddForce(_skillDir * 6, ForceMode.Impulse);
-            //             Debug.Log("s3");
-            //         }
-            //     }
-            //     else
-            //     {
-            //         break;
-            //     }
-            // }
-            // else
-            // {
-            //     break;
-            // }
         }
 
         player.blockMove = false;

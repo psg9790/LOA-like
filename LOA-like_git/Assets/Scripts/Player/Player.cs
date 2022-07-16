@@ -42,6 +42,17 @@ public class Player : MonoBehaviour
 
     public PlayerStats playerStats;
 
+    public float criticalBonusPercent;
+    public float greenSkillBonusPercent;
+    public float speedBonusPercent;
+    public float coolDownBonusPercent;
+    public void RefreshBonus()
+    {
+        criticalBonusPercent = playerStats.crit * PlayerStats.critPerPoint;
+        greenSkillBonusPercent = playerStats.specialization * PlayerStats.greenDamagePerPoint;
+        speedBonusPercent = playerStats.swiftness * PlayerStats.speedPerpoint;
+        coolDownBonusPercent = playerStats.swiftness * PlayerStats.coolDownPerPoint;
+    }
 
     private void Start()
     {

@@ -15,6 +15,7 @@ public class TrainingUI : MonoBehaviour
     [BoxGroup("StatFix")] public GameObject statPopup;
     [BoxGroup("StatFix")] public TextMeshProUGUI[] curStats;
     [BoxGroup("StatFix")] public TMP_InputField[] targetStatsInput;
+    [BoxGroup("StatFix")] public TextMeshProUGUI[] specificDifference;
 
     [BoxGroup("Dummy")] public GameObject dummyPrefab;
     [BoxGroup("Dummy")] public GameObject HPbarGO;
@@ -75,19 +76,25 @@ public class TrainingUI : MonoBehaviour
         curStats[1].text = player.playerStats.specialization.ToString();
         curStats[2].text = player.playerStats.swiftness.ToString();
     }
-    public void StatFixButton()
+    public void StatFixStatsButton()
     {
         statPopup.SetActive(true);
         RefreshCurStatsText();
     }
-    public void AdjustTargetTextButton()
+    public void AdjustTargetStatsButton()
     {
         // 예외처리 해야하는데
         player.playerStats.crit = int.Parse(targetStatsInput[0].text);
         player.playerStats.specialization = int.Parse(targetStatsInput[1].text);
         player.playerStats.swiftness = int.Parse(targetStatsInput[2].text);
+        player.RefreshBonus();
 
-        EscapeStatFix();
+        specificDifference[0].text = "+" + player.criticalBonusPercent.ToString() + "%";
+        specificDifference[1].text = "+" + player.greenSkillBonusPercent.ToString() + "%";
+        specificDifference[2].text = "+" + player.speedBonusPercent.ToString() + "%";
+        specificDifference[3].text = "+" + player.coolDownBonusPercent.ToString() + "%";
+
+        // EscapeStatFix();
     }
     public void EscapeStatFix()
     {

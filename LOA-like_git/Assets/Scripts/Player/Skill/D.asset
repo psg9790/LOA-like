@@ -23,7 +23,9 @@ MonoBehaviour:
     SerializationNodes: []
   skillName: "\uC77C\uB9DD\uD0C0\uC9C4"
   coolDown: 5
+  isGreenSkill: 1
   yellowCost: 0
   yellowEarn: 15
   greenCost: 25
   greenEarn: 0
+  attackDamageRatio: 1
