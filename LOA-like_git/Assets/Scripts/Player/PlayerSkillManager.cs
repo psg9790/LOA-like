@@ -42,11 +42,28 @@ public class PlayerSkillManager : MonoBehaviour
         StartCoroutine(GageEarnCo());
     }
 
-    public void TryAttackFunc(Vector3 _direction, float _range, PlayerSkillType _skillType)
+    public DamageDisplayPool damageDisplayPool;
+    public void TryAttackFunc(Vector3 _direction, float _range, PlayerSkillType _skillType, float _bonusDamage)
     {
         if (Physics.Raycast(transform.position + Vector3.up * 0.5f, _direction, out RaycastHit _tryhit, _range, 1 << LayerMask.NameToLayer("Monster")))
         {
+            bool isBackAttack = _tryhit.transform.CompareTag("BackAttack");
             Monster _hitMonster = _tryhit.transform.GetComponentInParent<Monster>();
+            if (_hitMonster != null)
+            {
+
+                // GameObject _go = damageDisplayPool.Pop();
+                DamageDisplay _dd = damageDisplayPool.Pop();
+
+                bool crit = Random.Range(0f, 100f) < (player.criticalBonusPercent + (isBackAttack ? 8 : 0));
+                float damage = player.defaultDamage * (crit ? 2 : 1) * (isBackAttack ? 1.05f : 1) * (_skillType.isGreenSkill ? (1 + player.greenSkillBonusPercent * 0.01f) : 1) * _skillType.attackDamageRatio * (1 + _bonusDamage);
+                damage *= Random.Range(0.9f, 1f);
+                damage = (int)damage;
+
+
+                _hitMonster.GetDamage(damage);
+                _dd.DoAction(damage, crit, _hitMonster.transform, isBackAttack);
+            }
         }
     }
 
@@ -159,7 +176,7 @@ public class PlayerSkillManager : MonoBehaviour
                     coolTime[x] -= Time.deltaTime;
                     if (coolTime[x] >= 0)   // 나누기 에러 방지
                     {
-                        skillCooldownImageList[x].fillAmount = coolTime[x] / skillList.list[x].coolDown;
+                        skillCooldownImageList[x].fillAmount = coolTime[x] / (skillList.list[x].coolDown * Mathf.Clamp01(1 - player.coolDownBonusPercent * 0.01f));
                     }
                     if (coolTime[x] <= 0)
                     {
@@ -180,7 +197,7 @@ public class PlayerSkillManager : MonoBehaviour
         }
         if (coolTime[8] >= 0)
         {
-            spaceIconList[1].fillAmount = coolTime[8] / skillList.list[8].coolDown;
+            spaceIconList[1].fillAmount = coolTime[8] / (skillList.list[8].coolDown * Mathf.Clamp01(1 - player.coolDownBonusPercent * 0.01f));
         }
         if (coolTime[8] > 0)
         {
@@ -198,7 +215,7 @@ public class PlayerSkillManager : MonoBehaviour
     {
         state = _skillState;
         active[(int)_skillState] = false;
-        coolTime[(int)_skillState] = skillList.list[(int)_skillState].coolDown;
+        coolTime[(int)_skillState] = skillList.list[(int)_skillState].coolDown * Mathf.Clamp01(1 - player.coolDownBonusPercent * 0.01f);
 
         curYellowGage -= skillList.list[(int)_skillState].yellowCost;
         curYellowGage += skillList.list[(int)_skillState].yellowEarn;
@@ -223,8 +240,8 @@ public class PlayerSkillManager : MonoBehaviour
         _skillDir = Vector3.Normalize(_skillDir);
         transform.rotation = Quaternion.LookRotation(_skillDir);
 
-        bool _attacked2 = false;
         player.anim.SetTrigger("Q");
+        bool attacked = false;
 
         while (true)
         {
@@ -233,11 +250,19 @@ public class PlayerSkillManager : MonoBehaviour
             if (_elapsed < 0.1f)
             {
                 player.rigid.velocity = _skillDir * Mathf.Pow(1 - _elapsed, 2) * 25;
-
+                // TryAttackFunc(transform.forward, 1f, skillList.list[0]);
             }
             else if (_elapsed < 0.8f)
             {
                 player.rigid.velocity = player.rigid.velocity * 0.95f;
+                if (!attacked)
+                {
+                    if (_elapsed > 0.6f)
+                    {
+                        attacked = true;
+                        TryAttackFunc(transform.forward, 1f, skillList.list[0], 0);
+                    }
+                }
             }
             else if (_elapsed > 0.85f)
             {
@@ -245,15 +270,6 @@ public class PlayerSkillManager : MonoBehaviour
                 break;
             }
 
-            if (!_attacked2)    // 공격 한번만 하게 하는 bool
-            {
-                if (_elapsed > 0.56f)
-                {
-                    // 공격판정
-                    Debug.DrawRay(transform.position + Vector3.up, _skillDir * 2, Color.red, 2f);
-                    _attacked2 = true;
-                }
-            }
         }
 
         player.blockMove = false;
@@ -275,6 +291,7 @@ public class PlayerSkillManager : MonoBehaviour
         _skillDir = Vector3.Normalize(_skillDir);
         transform.rotation = Quaternion.LookRotation(_skillDir);
 
+        bool attackedMotion = false;
         bool attacked = false;
 
         while (true)
@@ -283,10 +300,18 @@ public class PlayerSkillManager : MonoBehaviour
             float _elapsed = Time.time - _startTime;
             if (_elapsed < 0.6f)
             {
+                if (!attackedMotion)
+                {
+                    attackedMotion = true;
+                    player.anim.SetTrigger("W1");
+                }
                 if (!attacked)
                 {
-                    attacked = true;
-                    player.anim.SetTrigger("W1");
+                    if (_elapsed > 0.25f)
+                    {
+                        attacked = true;
+                        TryAttackFunc(transform.forward, 1f, skillList.list[1], 0);
+                    }
                 }
             }
             else
@@ -330,10 +355,13 @@ public class PlayerSkillManager : MonoBehaviour
                         _skillDir.y = 0;
                         _skillDir = Vector3.Normalize(_skillDir);
                         transform.rotation = Quaternion.LookRotation(_skillDir);
+                        player.anim.SetTrigger("W2");
+
                         _startTime = Time.time;
                         doAttack = true;
                         player.blockMove = true;
                         player.state = Player.State.Idle;
+                        TryAttackFunc(transform.forward, 1f, skillList.list[1], 0);
                     }
                 }
                 else
@@ -374,6 +402,7 @@ public class PlayerSkillManager : MonoBehaviour
         player.anim.SetTrigger("E");
 
         bool dash = false;
+        bool attacked = false;
 
         while (true)
         {
@@ -392,6 +421,14 @@ public class PlayerSkillManager : MonoBehaviour
             }
             else if (_elapsed < 0.5f)
             {
+                if (!attacked)
+                {
+                    if (_elapsed > 0.4f)
+                    {
+                        attacked = true;
+                        TryAttackFunc(transform.forward, 1f, skillList.list[2], 0);
+                    }
+                }
                 player.rigid.velocity = Vector3.zero;
             }
             else
@@ -433,6 +470,7 @@ public class PlayerSkillManager : MonoBehaviour
                 {
                     attacked = true;
                     _skillDir = -_skillDir * 2 + Vector3.up;
+                    TryAttackFunc(transform.forward, 1.1f, skillList.list[3], 0);
                     player.rigid.AddForce(_skillDir * 3, ForceMode.Impulse);
                 }
             }
@@ -462,13 +500,31 @@ public class PlayerSkillManager : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(_skillDir);
         player.anim.SetTrigger("A");
 
+        bool preAttacked = false;
+        bool attacked = false;
+
         while (true)
         {
             yield return null;
             float _elapsed = Time.time - _startTime;
             if (_elapsed < 2.4f)
             {
-
+                if (!preAttacked)
+                {
+                    if (_elapsed > 0.3f)
+                    {
+                        preAttacked = true;
+                        TryAttackFunc(transform.forward, 2f, skillList.list[4], -0.75f);
+                    }
+                }
+                if (!attacked)
+                {
+                    if (_elapsed > 1.35f)
+                    {
+                        attacked = true;
+                        TryAttackFunc(transform.forward, 2f, skillList.list[4], 0);
+                    }
+                }
             }
             else
             {
@@ -502,7 +558,10 @@ public class PlayerSkillManager : MonoBehaviour
             float _elapsed = Time.time - _startTime;
             if (_elapsed < 2.1f)
             {
-
+                if (_elapsed > 0.2f && _elapsed < 1.6f)
+                {
+                    TryAttackFunc(transform.forward, 3f, skillList.list[5], 0);
+                }
             }
             else
             {
@@ -530,7 +589,8 @@ public class PlayerSkillManager : MonoBehaviour
         transform.rotation = Quaternion.LookRotation(_skillDir);
         player.anim.SetTrigger("D");
 
-        bool atk = false;
+        bool dash = false;
+        bool attacked = false;
 
         while (true)
         {
@@ -542,10 +602,18 @@ public class PlayerSkillManager : MonoBehaviour
             }
             else if (_elapsed < 0.8f)
             {
-                if (!atk)
+                if (!dash)
                 {
-                    atk = true;
+                    dash = true;
                     player.rigid.AddForce(_skillDir * 3, ForceMode.Impulse);
+                }
+                if (!attacked)
+                {
+                    if (_elapsed > 0.35f)
+                    {
+                        attacked = true;
+                        TryAttackFunc(transform.forward, 1.5f, skillList.list[6], 0);
+                    }
                 }
             }
             else
@@ -563,6 +631,7 @@ public class PlayerSkillManager : MonoBehaviour
     {
         player.state = Player.State.Idle;
         player.blockMove = true;
+        float usedGreenGageAmount = curGreenGage;
         UsedSkill(State.F);
         yield return null;      // move state의 transform.DoKill 대기
 
@@ -587,6 +656,7 @@ public class PlayerSkillManager : MonoBehaviour
                 {
                     knockBack = true;
                     player.rigid.AddForce(-transform.forward * 10, ForceMode.Impulse);
+                    TryAttackFunc(transform.forward, 1.2f, skillList.list[7], (usedGreenGageAmount / 100f));
                 }
             }
             if (_elapsed > 1.25f)

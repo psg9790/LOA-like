@@ -42,9 +42,17 @@ public class TrainingUI : MonoBehaviour
     }
     public void SpawnDummyButton()
     {
-        GameObject _monsterGo = Instantiate(dummyPrefab, Vector3.zero + Vector3.up * 2.384186e-07f, dummyPrefab.transform.rotation);
-        Monster _monster = _monsterGo.GetComponent<Monster>();
-        monster = _monster;
+        if (monster == null)
+        {
+
+            GameObject _monsterGo = Instantiate(dummyPrefab, Vector3.zero + Vector3.up * 2.384186e-07f, dummyPrefab.transform.rotation);
+            Monster _monster = _monsterGo.GetComponent<Monster>();
+            monster = _monster;
+        }
+        else
+        {
+            monster.curHealth = monster.initHealth;
+        }
     }
     public void RemoveDummyButton()
     {
@@ -94,6 +102,7 @@ public class TrainingUI : MonoBehaviour
         specificDifference[2].text = "+" + player.speedBonusPercent.ToString() + "%";
         specificDifference[3].text = "+" + player.coolDownBonusPercent.ToString() + "%";
 
+        RefreshCurStatsText();
         // EscapeStatFix();
     }
     public void EscapeStatFix()

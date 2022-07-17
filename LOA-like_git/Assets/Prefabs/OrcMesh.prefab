@@ -76,7 +76,7 @@ GameObject:
   - component: {fileID: 4800409369006008376}
   m_Layer: 7
   m_Name: BackAttack Pos
-  m_TagString: Untagged
+  m_TagString: BackAttack
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -106,7 +106,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.4
+  m_Radius: 0.45
   m_Height: 2
   m_Direction: 1
   m_Center: {x: 0, y: 1, z: -0.15}
@@ -2438,5 +2438,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: de3a50f632e5e3342b55cc1efa5a5a77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  initHealth: 1000000
-  curHealth: 1000000
+  initHealth: 100000000
+  curHealth: 100000000

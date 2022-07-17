@@ -28,4 +28,4 @@ MonoBehaviour:
   yellowEarn: 15
   greenCost: 25
   greenEarn: 0
-  attackDamageRatio: 1
+  attackDamageRatio: 0.8

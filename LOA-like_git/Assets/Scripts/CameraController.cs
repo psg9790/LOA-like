@@ -49,7 +49,7 @@ public class CameraController : MonoBehaviour
     {
         targetY0 = target.position;
         targetY0.y = 0;
-        transform.position = targetY0 + chaseOffset;
+        transform.position = Vector3.Lerp(transform.position, targetY0 + chaseOffset, 0.1f);
         transform.LookAt(target);
 
     }

@@ -46,6 +46,9 @@ public class Player : MonoBehaviour
     public float greenSkillBonusPercent;
     public float speedBonusPercent;
     public float coolDownBonusPercent;
+
+    public float defaultDamage = 500000f;
+
     public void RefreshBonus()
     {
         criticalBonusPercent = playerStats.crit * PlayerStats.critPerPoint;
@@ -97,7 +100,7 @@ public class Player : MonoBehaviour
             yield return null;
             moveVec = targetPos - transform.position;
             moveVec.y = 0;
-            moveVec = Vector3.Normalize(moveVec) * 1.5f;
+            moveVec = Vector3.Normalize(moveVec) * 1.5f * (1 + speedBonusPercent * 0.01f);
 
 
             // if (Physics.Raycast(transform.position + Vector3.up * 0.5f, moveVec * 0.3f, out RaycastHit hit1, 1))
